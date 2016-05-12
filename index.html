@@ -43,30 +43,30 @@
           <div class="well well-sm text-center">
             <p class="text">Choose <b>X</b>s or <b>O</b>s:
               <input-group>
-                <button type="radio" name="choosePlayerMarker" value="X" class="btn btn-success choosePlayerMarker"> &#x2716;</button>
-                <button type="radio" name="choosePlayerMarker" value="O" class="btn btn-primary choosePlayerMarker"> <i class="fa fa-circle-o"></i></button>
+                <button type="radio" name="humanChooseMarker" value="X" class="btn btn-danger humanChooseMarker"> &#x2716;</button>
+                <button type="radio" name="humanChooseMarker" value="O" class="btn btn-primary humanChooseMarker"> <i class="fa fa-circle-o"></i></button>
               </input-group>
             </p>
+            <button id="start" class="btn btn-block btn-lg btn-success">Start Game</button>
             <button id="reset" class="btn btn-block btn-lg btn-warning">Reset Game</button>
-            <button class="btn btn-block btn-default testBtn">Test Button</button>
           </div>
         </div>
         <div class="col-md-7 col-xs-12">
           <div class="gameArea">
             <div class="boardRow" id="a">
-							<div id="0" value="2" class="boardCell fillCell corner"></div>
-							<div id="1" value="7" class="boardCell fillCell edge"></div>
-							<div id="2" value="6" class="boardCell fillCell corner"></div>
+							<div id="0" value="" class="boardCell fillCell corner"></div>
+							<div id="1" value="" class="boardCell fillCell edge"></div>
+							<div id="2" value="" class="boardCell fillCell corner"></div>
             </div>
             <div class="boardRow" id="b">
-							<div id="3" value="9" class="boardCell fillCell edge"></div>
-							<div id="4" value="5" class="boardCell fillCell center"></div>
-							<div id="5" value="1" class="boardCell fillCell edge"></div>
+							<div id="3" value="" class="boardCell fillCell edge"></div>
+							<div id="4" value="" class="boardCell fillCell center"></div>
+							<div id="5" value="" class="boardCell fillCell edge"></div>
             </div>
             <div class="boardRow" id="c">
-							<div id="6" value="4" class="boardCell fillCell corner"></div>
-							<div id="7" value="3" class="boardCell fillCell edge"></div>
-							<div id="8" value="8" class="boardCell fillCell corner"></div>
+							<div id="6" value="" class="boardCell fillCell corner"></div>
+							<div id="7" value="" class="boardCell fillCell edge"></div>
+							<div id="8" value="" class="boardCell fillCell corner"></div>
             </div>
           </div>
         </div>

@@ -85,7 +85,6 @@ input::-moz-focus-inner {
           align-items: stretch;
 }
 
-
 .fillCell {
 	margin: 2px;
   border: 2px solid #aaaaaa;
@@ -108,9 +107,9 @@ input::-moz-focus-inner {
 }
 
 .Xmarker {
-  box-shadow: inset 0px 0px 9px 6px #5cb85c;
+  box-shadow: inset 0px 0px 9px 6px #e7908e;
 }
 
 .Omarker {
-  box-shadow: inset 0px 0px 9px 6px #428BCA;
+  box-shadow: inset 0px 0px 9px 6px #7eb0db;
 }

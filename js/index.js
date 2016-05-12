@@ -18,126 +18,101 @@ $(function emailObscurer(){
 });
 
 // default game state: computer goes first, uses X
-var Xmarker = true;
-var playerTurn = false;
-var newGameData = {};
-var moveCounter = 0;
-var playerMoves = [];
-var computerMoves = [];
+let isXturn = true;
+let ishumanTurn = false;
+const gameData = {
+	center: [4],
+	corner: [0,2,6,8],
+	edge: [1,3,5,7],
+	Xmoves: [],
+	Omoves: [],
+	freeSquares: {
+		a: [0,1,2],
+		b: [3,4,5],
+		c: [6,7,8]
+	}
+}
+function setupBoard(){
+	let chooseBoard = "board" + Math.floor(Math.random()*10) % 8;
+	const boardLayouts = {
+		board1: {a:[2,7,6],b:[9,5,1],c:[4,3,8]},
+		board2: {a:[4,3,8],b:[9,5,1],c:[2,7,6]},
+		board3: {a:[6,7,2],b:[1,5,9],c:[8,3,4]},
+		board4: {a:[8,3,4],b:[1,5,9],c:[6,7,2]},
+		board5: {a:[4,9,2],b:[3,5,7],c:[8,1,6]},
+		board6: {a:[8,1,6],b:[3,5,7],c:[4,9,2]},
+		board7: {a:[6,1,8],b:[7,5,3],c:[2,9,4]},
+		board0: {a:[2,9,4],b:[7,5,3],c:[6,1,8]}
+	}
+	$(".boardCell").each(function(index){
+		let row = $(this).parent().attr("id");
+		$(this).attr("value",(boardLayouts[chooseBoard][row][index % 3]));
+	});
+	return $(".gameArea");
+}
 
 //basic game functions
-$(".choosePlayerMarker").click(function(){ 
+function placeMarker(cell) {
+	if (isXturn === true && $(cell).html() == "") {
+		$(cell)
+			.toggleClass("Xmarker")
+			.html('&#x2716;');
+	} else if (isXturn === false && $(cell).html() == "") {
+		$(cell)
+			.toggleClass("Omarker")
+			.html('<i class="fa fa-circle-o"></i>')
+	} else {
+		alert("Choose a blank square");
+		return false;
+	}
+	isXturn = !isXturn;	
+}
+	
+$(".humanChooseMarker").click(function(){ 
   if ($(this).val() == "X"){
-    Xmarker = true;
+    isXturn = true;
   } else {
-    Xmarker = false;
+    isXturn = false;
   }
 })
 
 $(".fillCell").click(function(){
 	placeMarker(this);
-	updateGameData(this);
 })
 
 $("#reset").click(function(){
-  $(".fillCell")
+  $(".boardCell")
     .html("")
     .removeClass("Xmarker")
     .removeClass("Omarker")
-		.val("0");
-	scrambleSquares();
-	initializeGameData();
+	setupBoard();
 })
 
-function placeMarker(cell) {
-	if (Xmarker === true && $(cell).html() == "") {
-    $(cell)
-			.toggleClass("Xmarker")
-			.html('&#x2716;')
-			.attr("value","X")
-  } else if (Xmarker === false && $(cell).html() == "") {
-    $(cell)
-			.toggleClass("Omarker")
-			.html('<i class="fa fa-circle-o"></i>')
-			.attr("value","O")
-  } else {
-		alert("Choose a blank square");
-		return false;
-	}
-	Xmarker = !Xmarker;
-}
-
-function scrambleSquares() {
-	var randomValue = Math.ceil(Math.random()*10) * 3;
-	$(".fillCell").each(function(){
-		$(this).attr("id",(parseInt($(this).attr("id")) + randomValue) % 9);
-	});	
-}
-
-function initializeGameData(){
-	newGameData = new gameData();
-	moveCounter = 0;
-	for (var i = 0, j = 3; i < j; i++) {
-		var position = positions[i];
-		newGameData[position] = [];
-		$("." + position).each(function(){
-			newGameData[position].push(this.id);
-		});
-	}
-	console.log(newGameData);
-	return newGameData;
-}
-
 $(document).ready(function(){
-	initializeGameData();
+	setupBoard();
 });
 
 
-//game logic
-var positions = ["corner","edge","center"];
-var magicSquares = {
-	board1: {a:[2,7,6],b:[9,5,1],c:[4,3,8]},
-	board2: {a:[4,3,8],b:[9,5,1],c:[2,7,6]},
-	board3: {a:[6,7,2],b:[1,5,9],c:[8,3,4]},
-	board4: {a:[8,3,4],b:[1,5,9],c:[6,7,2]},
-	board5: {a:[4,9,2],b:[3,5,7],c:[8,1,6]},
-	board6: {a:[8,1,6],b:[3,5,7],c:[4,9,2]},
-	board7: {a:[6,1,8],b:[7,5,3],c:[2,9,4]},
-	board0: {a:[2,9,4],b:[7,5,3],c:[6,1,8]}
-}
 
-function gameData() {
+/* game logic
+
+function playGame() {
 	
-	var chooseBoard = "board" + Math.floor(Math.random()*10) % 8;
-	$(".boardCell").each(function(element, index){
-		var idx = $(this).parent().attr("id");
-		for (var i = 0, j = 3; i < j; i++) {
-			$(this).attr("value",(magicSquares[chooseBoard][idx][index]));
-		}
-	});
+	
 }
 
-function updateGameData (cell) {
-	var row = $(cell).parent().attr("id");
-}
-
-// var clonedObject = $.extend(true, {}, existingObject);
-
-/*
-First player takes a corner. 
-Second player takes an adjacent square.
-
-Okay, so assigning each square a number creates three digit numbers for each winning combination. 
+First human takes a corner. 
+Second human takes an adjacent square.
 
 first move()
   if corner.html() = ""
     get the corner spot with the highest Id number
-    set it to choosePlayerMarker
+    set it to humanChooseMarker
   else if center.html() = ""
-    set it to choosePlayerMarker
+    set it to humanChooseMarker
   else if edge.html() = ""
     get the edge spot with the highest Id number
-    set it to choosePlayerMarker
+    set it to humanChooseMarker
 
 every move() after the first
 	if I can win on this move
@@ -146,17 +121,26 @@ every move() after the first
 		block
 	else if corner.html() = ""
 		get the corner spot with the highest Id number
-		set it to choosePlayerMarker
+		set it to humanChooseMarker
 	else if center.html() = ""
 		get the corner spot with the highest Id number
-		set it to choosePlayerMarker
+		set it to humanChooseMarker
 	else if edge.html() = ""
 		get the corner spot with the highest Id number
-		set it to choosePlayerMarker
+		set it to humanChooseMarker
   
 When game is over, reset button scrambles the Id numbers and starts over.
 
 Need way to track whether it's human turn or computer turn.
 
 Also need a way to track the combinations. Could use multidimentional arrays? Or maybe objects?
+
+OLD CODE BITS
+function to reset the Ids of the board squares
+function scrambleSquares() {
+	var randomValue = Math.ceil(Math.random()*10) * 3;
+	$(".fillCell").each(function(){
+		$(this).attr("id",(parseInt($(this).attr("id")) + randomValue) % 9);
+	});	
+}
 */
