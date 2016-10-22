@@ -14,7 +14,7 @@ $(function emailObscurer(){
       link += (key.charAt(ltr))
     }
   }
-  $("#email").html("<a target='_blank' href='mailto:" + link + "'>Email</a>")
+  $("#email").html("<a href='mailto:" + link + "'>Email</a>")
 });
 
 // default game state: computer goes first, uses X
