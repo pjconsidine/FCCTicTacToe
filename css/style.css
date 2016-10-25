@@ -86,10 +86,10 @@ input::-moz-focus-inner {
 }
 
 .fillCell {
-	margin: 2px;
+  margin: 2px;
   border: 2px solid #aaaaaa;
   box-shadow: inset 0px 0px 9px 6px #c9c9c9;
-	width: 20rem;
+  width: 20rem;
   font-family: Noto Sans, Helvetica, sans serif;
   font-size: 6em;
   display: -webkit-box;
