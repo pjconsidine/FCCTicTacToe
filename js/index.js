@@ -60,21 +60,24 @@ function setupBoard() {
 
 function placeMarker(cell, marker) {
     newGameData.totalMoves = Number(newGameData.totalMoves) + 1;
-
     var updateGameData = function (marker) {
+        /* What should happen here is that when a marker is placed, the classes from that game cell are added to the player's game data as an array
+        Then when the WinOrBlock function kicks in, it will check all the arrays for length. If there's a length === 2, it places a marker on the space with 
+         the value that adds up to 15. So the UpdateData function should just check the (cell) and add its classes */
         var playerMarker = marker + "marker";
         $(newGameData.board).each(function (index, element) {
-            var e = "." + element.toString();
-                console.log(e);
+            if($(cell).hasClass(element)) {
+                console.log($(cell));
+            }
         });
     };
 
-    if (marker == "X" && $(cell).html() == "") {
+    if (marker === "X" && $(cell).html() === "") {
         $(cell)
                 .toggleClass("Xmarker")
-                .html('U+00D7;');
+                .html( "&#x2716;");
         updateGameData("X");
-    } else if (marker == "O" && $(cell).html() == "") {
+    } else if (marker === "O" && $(cell).html() === "") {
         $(cell)
                 .toggleClass("Omarker")
                 .html('<i class="fa fa-circle-o"></i>')
@@ -91,17 +94,17 @@ function placeMarker(cell, marker) {
 
 $(".fillCell").click(function () {
     placeMarker(this, human);
-})
+});
 $("#reset").click(function () {
     $(".boardCell")
             .html("")
             .removeClass("Xmarker")
-            .removeClass("Omarker")
+            .removeClass("Omarker");
     setupBoard();
     isHumanTurn = false;
     var newGameData = $.extend({}, gameData, true);
     return newGameData;
-})
+});
 $("#start").click(function () {
     playGame();
 });
@@ -148,7 +151,7 @@ function playGame() {
             placeMarker($(".boardCell[value=3]"), "X");
         }
     } else if (newGameData.totalMoves > 3) {
-        if (winOrBlock(comp) == false) {
+        if (winOrBlock(comp) === false) {
             winOrBlock(human);
         }
     }
