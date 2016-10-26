@@ -61,13 +61,17 @@ function setupBoard() {
 function placeMarker(cell, marker) {
     newGameData.totalMoves = Number(newGameData.totalMoves) + 1;
     var updateGameData = function (marker) {
-        /* What should happen here is that when a marker is placed, the classes from that game cell are added to the player's game data as an array
-        Then when the WinOrBlock function kicks in, it will check all the arrays for length. If there's a length === 2, it places a marker on the space with 
-         the value that adds up to 15. So the UpdateData function should just check the (cell) and add its classes */
         var playerMarker = marker + "marker";
+        var cellValue = $(cell).attr('value');
         $(newGameData.board).each(function (index, element) {
-            if($(cell).hasClass(element)) {
-                console.log($(cell));
+            if ($(cell).hasClass(element)) {
+                if (newGameData[marker][element]) {
+                    if (newGameData[marker][element].indexOf(cellValue) === -1) {
+                        newGameData[marker][element].push(Number(cellValue));
+                    }
+                } else {
+                    newGameData[marker][element] = [Number(cellValue)];
+                }
             }
         });
     };
@@ -75,12 +79,12 @@ function placeMarker(cell, marker) {
     if (marker === "X" && $(cell).html() === "") {
         $(cell)
                 .toggleClass("Xmarker")
-                .html( "&#x2716;");
+                .html("&#x2716;");
         updateGameData("X");
     } else if (marker === "O" && $(cell).html() === "") {
         $(cell)
                 .toggleClass("Omarker")
-                .html('<i class="fa fa-circle-o"></i>')
+                .html('<i class="fa fa-circle-o"></i>');
         updateGameData("O");
     } else if (gameOver === true) {
         alert("Game is a draw\nTry again");
@@ -90,6 +94,7 @@ function placeMarker(cell, marker) {
         return false;
     }
     isHumanTurn = !isHumanTurn;
+    console.log(newGameData.totalMoves);
 }
 
 $(".fillCell").click(function () {
@@ -116,44 +121,39 @@ function playGame() {
 
     function winOrBlock(player) {
         // finds two in a row and either wins or blocks
-        for (var key of Object.keys(newGameData.player)) {
-            var x = newGameData.player[key].reduce(function (a, b) {
+        for (var key of Object.keys(newGameData[player])) {
+            var x = newGameData[player][key].reduce(function (a, b) {
                 return +a + +b; });
-            if (key.match(player) === true) {
-                console.log(newGameData.player);
-                if (newGameData.player[key].length > 1) {
-                    if ($(".boardCell[value=" + (15 - x) + "]").html() === "") {
-                        placeMarker($(".boardCell[value=" + (15 - x) + "]"), "X");
-                        return true;
-                    }
-                }
+            var y = 15 - x;
+            var winBlockCell = $(".boardCell[value=" + y + "]");
+            if (key.length === 2 && winBlockCell.html() === "") {
+                placeMarker(winBlockCell, "X");
+                return true;
             }
         }
-        return false;
-    }
+    return false;
+}
 
-    if (newGameData.totalMoves === 0) { 					// computer goes first
-        placeMarker($(".boardCell[value=8]"), "X");
-    } else if (newGameData.totalMoves === 1) { 		// human goes first
-        if ($(".center").hasClass("Omarker")) {
-            placeMarker($(".corner[value=8]"), "X");
-        } else {
-            placeMarker($(".center"), "X");
-        }
-    } else if (newGameData.totalMoves === 2) {		// computer's second move
-        if ($(".center").hasClass('Omarker')) {
-            placeMarker($(".corner[value=2]"), 'X');
-        } else {
-            placeMarker($(".corner[value=4]"), "X");
-        }
-    } else if (newGameData.totalMoves === 3) {
-        if (winOrBlock(human) === false) {
-            placeMarker($(".boardCell[value=3]"), "X");
-        }
-    } else if (newGameData.totalMoves > 3) {
-        if (winOrBlock(comp) === false) {
-            winOrBlock(human);
-        }
+if (newGameData.totalMoves === 0) { 					// computer goes first
+    placeMarker($(".boardCell[value=8]"), "X");
+} else if (newGameData.totalMoves === 1) { 		// human goes first
+    if ($(".center").hasClass("Omarker")) {
+        placeMarker($(".corner[value=8]"), "X");
+    } else {
+        placeMarker($(".center"), "X");
+    }
+} else if (newGameData.totalMoves === 2) {		// computer's second move
+    if ($(".center").hasClass('Omarker')) {
+        placeMarker($(".corner[value=2]"), 'X');
+    } else {
+        placeMarker($(".corner[value=4]"), "X");
+    }
+} else if (newGameData.totalMoves === 3) {
+    if (winOrBlock(human) === false) {
+        placeMarker($(".boardCell[value=3]"), "X");
+    }
+} else if (newGameData.totalMoves > 3) {
+        winOrBlock(human);
     }
 }
 /* routine for computer going first
