@@ -115,44 +115,45 @@ $("#start").click(function () {
 });
 
 // game logic
-function playGame() {
-    var compMoves = new RegExp("X", "gi");
-    var humanMoves = new RegExp("O", "gi");
-
-    function winOrBlock(player) {
-        // finds two in a row and either wins or blocks
-        for (var key of Object.keys(newGameData[player])) {
-            var x = newGameData[player][key].reduce(function (a, b) {
+function winOrBlock(player) {
+// finds two in a row and either wins or blocks
+    for (var key of Object.keys(newGameData[player])) {
+        var k = newGameData[player][key];
+        if (k.length === 2) {
+            var x = k.reduce(function (a, b) {
                 return +a + +b; });
             var y = 15 - x;
-            var winBlockCell = $(".boardCell[value=" + y + "]");
-            if (key.length === 2 && winBlockCell.html() === "") {
-                placeMarker(winBlockCell, "X");
-                return true;
+            var winBlockCell = '.boardCell[value=' + y + ']';
+            if (!placeMarker($(winBlockCell), comp)) {
+                console.log("error");
+                return false;
             }
         }
-    return false;
+    }
+    return true;
 }
 
-if (newGameData.totalMoves === 0) { 					// computer goes first
-    placeMarker($(".boardCell[value=8]"), "X");
-} else if (newGameData.totalMoves === 1) { 		// human goes first
-    if ($(".center").hasClass("Omarker")) {
-        placeMarker($(".corner[value=8]"), "X");
-    } else {
-        placeMarker($(".center"), "X");
-    }
-} else if (newGameData.totalMoves === 2) {		// computer's second move
-    if ($(".center").hasClass('Omarker')) {
-        placeMarker($(".corner[value=2]"), 'X');
-    } else {
-        placeMarker($(".corner[value=4]"), "X");
-    }
-} else if (newGameData.totalMoves === 3) {
-    if (winOrBlock(human) === false) {
-        placeMarker($(".boardCell[value=3]"), "X");
-    }
-} else if (newGameData.totalMoves > 3) {
+function playGame() {
+    if (newGameData.totalMoves === 0) { 			// computer goes first
+        placeMarker($(".boardCell[value=8]"), comp);
+    } else if (newGameData.totalMoves === 1) { 		// human goes first
+        if ($(".center").hasClass("Omarker")) {
+            placeMarker($(".corner[value=8]"), comp);
+        } else {
+            placeMarker($(".center"), comp);
+        }
+    } else if (newGameData.totalMoves === 2) {		// computer's second move
+        if ($(".center").hasClass('Omarker')) {
+            placeMarker($(".corner[value=2]"), comp);
+        } else {
+            placeMarker($(".corner[value=4]"), comp);
+        }
+    } else if (newGameData.totalMoves === 3) {
+        if (winOrBlock(human) === false) {
+            placeMarker($(".boardCell[value=3]"), "X");
+        }
+    } else if (newGameData.totalMoves > 3) {
+        winOrBlock(comp);
         winOrBlock(human);
     }
 }
