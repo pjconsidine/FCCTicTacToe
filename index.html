@@ -6,11 +6,11 @@
         <meta charset="utf-8" />
         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="A journey of a thousand miles begins with a single step." />
 
         <link rel='stylesheet prefetch' href='css/bootstrap.min.css'>
         <link rel='stylesheet prefetch' href='css/font-awesome.min.css'>
         <link rel="stylesheet prefetch" href="css/style.css">
+        <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
 
     </head>
 
@@ -38,12 +38,12 @@
                 <div class="jumbotron well">
                     <div class="row">
                         <div class="col-md-5 col-xs-12">
-                            <h2>FreeCodeCamp<br />Tic Tac Toe</h2>
+                            <h2>FreeCodeCamp<wbr>Tic Tac Toe</h2>
                             <div class="well well-sm text-center">
                                 <p class="text">Choose <b>X</b>s or <b>O</b>s:
                                 <input-group>
-                                    <button type="radio" name="humanChooseMarker" value="X" class="btn btn-danger humanChooseMarker"> &#x2716;</button>
-                                    <button type="radio" name="humanChooseMarker" value="O" class="btn btn-primary humanChooseMarker"> <i class="fa fa-circle-o"></i></button>
+                                    <button type="radio" name="selectXorO" value="X" class="btn btn-danger selectXorO"> &#x2716;</button>
+                                    <button type="radio" name="selectXorO" value="O" class="btn btn-primary selectXorO"> <i class="fa fa-circle-o"></i></button>
                                 </input-group>
                                 </p>
                                 <button id="start" class="btn btn-block btn-lg btn-success">Play</button>
@@ -53,19 +53,19 @@
                         <div class="col-md-7 col-xs-12">
                             <div class="gameArea">
                                 <div class="boardRow" id="a">
-                                    <div id="1" value="" class="a A d boardCell fillCell corner"></div>
-                                    <div id="2" value="" class="a B boardCell fillCell edge"></div>
-                                    <div id="3" value="" class="a C D boardCell fillCell corner"></div>
+                                    <div id="1" value="" class="a A d boardCell fillCell"></div>
+                                    <div id="2" value="" class="a B boardCell fillCell"></div>
+                                    <div id="3" value="" class="a C D boardCell fillCell"></div>
                                 </div>
                                 <div class="boardRow" id="b">
-                                    <div id="4" value="" class="b A boardCell fillCell edge"></div>
-                                    <div id="5" value="" class="b B d D boardCell fillCell center"></div>
-                                    <div id="6" value="" class="b C boardCell fillCell edge"></div>
+                                    <div id="4" value="" class="b A boardCell fillCell"></div>
+                                    <div id="5" value="" class="b B d D boardCell fillCell"></div>
+                                    <div id="6" value="" class="b C boardCell fillCell"></div>
                                 </div>
                                 <div class="boardRow" id="c">
-                                    <div id="7" value="" class="c A D boardCell fillCell corner"></div>
-                                    <div id="8" value="" class="c B boardCell fillCell edge"></div>
-                                    <div id="9" value="" class="c C d boardCell fillCell corner"></div>
+                                    <div id="7" value="" class="c A D boardCell fillCell"></div>
+                                    <div id="8" value="" class="c B boardCell fillCell"></div>
+                                    <div id="9" value="" class="c C d boardCell fillCell"></div>
                                 </div>
                             </div>
                         </div>
