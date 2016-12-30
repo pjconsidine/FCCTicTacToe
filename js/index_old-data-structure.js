@@ -247,7 +247,7 @@ function scrambleSquares() {
 	});
 }
 
-$(".humanChooseMarker").click(function(){
+$(".selectXorO").click(function(){
   if ($(this).val() == "X"){
     human = "X";
 		comp = "O";
