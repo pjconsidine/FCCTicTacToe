@@ -27,7 +27,7 @@ var humanWon = false;
 var newGameData;
 var gameData = {
     board: ['a', 'b', 'c', 'A', 'B', 'C', 'd', 'D'], // row, columns, diagonals
-    X: {},
+    X: {},  //maybe replace this and make it "comp" and "human" instead? 
     O: {},
     last: {},
     centerId: [5],
@@ -57,23 +57,26 @@ function setupBoard() {
     newGameData = $.extend({}, gameData, true);
     return $(".gameArea"), newGameData;
 }
-function placeMarker(cell, marker) {
-    var updateGameData = function (marker) {
-        var cellValue = $(cell).attr('value');
-        newGameData.last[marker] = +cellValue;
-        
-        $(newGameData.board).each(function (index, element) {
-            if ($(cell).hasClass(element)) {
-                if (newGameData[marker][element]) {
-                    if (newGameData[marker][element].indexOf(cellValue) === -1) {
-                        newGameData[marker][element].push(Number(cellValue));
-                    }
-                } else {
-                    newGameData[marker][element] = [Number(cellValue)];
+
+function  updateGameData(marker) {
+    var cellValue = $(this).attr('value');
+    newGameData.last[marker] = +cellValue;
+
+    $(newGameData.board).each(function (index, element) {
+        if ($(this).hasClass(element)) {
+            if (newGameData[marker][element]) {
+                if (newGameData[marker][element].indexOf(cellValue) === -1) {
+                    newGameData[marker][element].push(Number(cellValue));
                 }
+            } else {
+                newGameData[marker][element] = [Number(cellValue)];
             }
-        });
-    };
+        }
+    });
+    newGameData.totalMoves = Number(newGameData.totalMoves) + 1;
+};
+
+function placeMarker(cell, marker) {
     if ($(cell).html() !== "") {
         return false;
     } else if (marker === "X" && $(cell).html() === "") {
@@ -81,17 +84,19 @@ function placeMarker(cell, marker) {
                 .toggleClass("Xmarker")
                 .html("&#x2716;");
         updateGameData("X");
+        isHumanTurn = !isHumanTurn;
+        return true;
     } else if (marker === "O" && $(cell).html() === "") {
         $(cell)
                 .toggleClass("Omarker")
                 .html('<i class="fa fa-circle-o"></i>');
         updateGameData("O");
+        isHumanTurn = !isHumanTurn;
+        return true;
     } else {
         console.log("No choice found");
         return false;
     }
-    isHumanTurn = !isHumanTurn;
-    newGameData.totalMoves = Number(newGameData.totalMoves) + 1;
 }
 
 $(".selectXorO").click(function () {
@@ -122,41 +127,43 @@ $("#reset").click(function () {
     var newGameData = $.extend({}, gameData, true);
     return newGameData;
 });
+
 $("#start").click(function () {
     playGame_CompFirst(comp);
 });
 
 // game logic
 function winOrBlock(marker) {
-// finds two in a row and either wins or blocks
-    // debugger;
+//  finds two in a row and either wins or blocks
+//  it should look for computer wins and then human blocks, so it should look for keys where the length is 2 and the marker
+//  is "comp" first. Then if it doesn't find anything there, it should look for keys where length is 2 and marker is "human."
+// The data structure is organized by X and O, but it needs to be done by Comp and Human
+
     for (var key of Object.keys(newGameData[marker])) {
         var k = newGameData[marker][key];
-        
         if (k.length === 3) {
-            alert ("Game Over\n" + marker + " wins");
-            return false;
+            return gameOver = true;
         } else if (k.length === 2) {
-            var x = k.reduce(function (a, b) { return +a + +b; });
+            var x = k.reduce(function (a, b) {
+                return +a + +b;
+            });
             var y = 15 - x;
-            var winBlockCell = '.boardCell[value=' + y + ']';
-            if ($(winBlockCell).html() === "")  { 
-                placeMarker(winBlockCell, comp);
-                return true;
-            } 
-        } 
+        }
     }
-    return false;
- }
-    
+    var winBlockCell = '.boardCell[value=' + y + ']';
+    if ($(winBlockCell).html() === "") {
+        placeMarker(winBlockCell, comp);
+    }
+}
+
 function playGame_CompFirst() {
     var last = newGameData.last[human];
-    
+
     switch (newGameData.totalMoves) {
         case 0:
             placeMarker($(".boardCell[value=8]"), comp);
             break;
-          case 2:
+        case 2:
             if (last === 5) {
                 placeMarker($(".boardCell[value=2]"), comp);
             } else if (last === 3) {
@@ -172,9 +179,9 @@ function playGame_CompFirst() {
             break;
         case 6:
             winOrBlock(comp);
-            winOrBlock(human); 
+            winOrBlock(human);
             if (winOrBlock(comp) === false && winOrBlock(human) === false) {
-                placeMarker($(".boardCell[value=2]"), comp);             
+                placeMarker($(".boardCell[value=2]"), comp);
             }
             break;
         default:
