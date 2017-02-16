@@ -1,5 +1,8 @@
-/* Email obfuscator script 2.1 by Tim Williams
- University of Arizona. Random encryption key feature by Andrew Moulden, Site Engineering Ltd. This code is freeware provided these four comment lines remain intact. A wizard to generate this code is at http://www.jottings.com/obfuscator/
+/* 
+ * Email obfuscator script 2.1 by Tim Williams
+ *  University of Arizona. Random encryption key feature by Andrew Moulden, Site Engineering Ltd. 
+ *  This code is freeware provided these four comment lines remain intact. 
+ *  A wizard to generate this code is at http://www.jottings.com/obfuscator/
  */
 $(function emailObscurer() {
     var coded = "grZr.1BDiwFwDr@QCAwO.1BC";
@@ -27,7 +30,7 @@ var humanWon = false;
 var newGameData;
 var gameData = {
     board: ['a', 'b', 'c', 'A', 'B', 'C', 'd', 'D'], // row, columns, diagonals
-    X: {},  //maybe replace this and make it "comp" and "human" instead? 
+    X: {},   
     O: {},
     last: {},
     centerId: [5],
@@ -58,12 +61,12 @@ function setupBoard() {
     return $(".gameArea"), newGameData;
 }
 
-function  updateGameData(marker) {
-    var cellValue = $(this).attr('value');
+function  updateGameData(cell, marker) {
+    var cellValue = $(cell).attr('value');
     newGameData.last[marker] = +cellValue;
-
-    $(newGameData.board).each(function (index, element) {
-        if ($(this).hasClass(element)) {
+    
+    $(newGameData.board).each(function (index, element) {                                 
+        if ($(cell).hasClass(element)) {
             if (newGameData[marker][element]) {
                 if (newGameData[marker][element].indexOf(cellValue) === -1) {
                     newGameData[marker][element].push(Number(cellValue));
@@ -83,14 +86,14 @@ function placeMarker(cell, marker) {
         $(cell)
                 .toggleClass("Xmarker")
                 .html("&#x2716;");
-        updateGameData("X");
+        updateGameData(cell, "X");
         isHumanTurn = !isHumanTurn;
         return true;
     } else if (marker === "O" && $(cell).html() === "") {
         $(cell)
                 .toggleClass("Omarker")
                 .html('<i class="fa fa-circle-o"></i>');
-        updateGameData("O");
+        updateGameData(cell, "O");
         isHumanTurn = !isHumanTurn;
         return true;
     } else {
@@ -129,34 +132,27 @@ $("#reset").click(function () {
 });
 
 $("#start").click(function () {
-    playGame_CompFirst(comp);
+    playGame(comp);
 });
 
 // game logic
-function winOrBlock(marker) {
-//  finds two in a row and either wins or blocks
-//  it should look for computer wins and then human blocks, so it should look for keys where the length is 2 and the marker
-//  is "comp" first. Then if it doesn't find anything there, it should look for keys where length is 2 and marker is "human."
-// The data structure is organized by X and O, but it needs to be done by Comp and Human
-
-    for (var key of Object.keys(newGameData[marker])) {
-        var k = newGameData[marker][key];
-        if (k.length === 3) {
-            return gameOver = true;
-        } else if (k.length === 2) {
-            var x = k.reduce(function (a, b) {
-                return +a + +b;
-            });
-            var y = 15 - x;
-        }
-    }
-    var winBlockCell = '.boardCell[value=' + y + ']';
-    if ($(winBlockCell).html() === "") {
-        placeMarker(winBlockCell, comp);
-    }
+function winOrBlock() {
+    /* 
+     * need to try to make this a single function that will work for both winning and blocking
+     * first check to see if comp can win
+     * if comp can't win, then check to see if human can win
+     * if human can't win, make a default move
+     */
+    
+    /*
+     * the actual function checks the comp's moves and completes an array with a length of 2 and returns true or false
+     * if that returns false, it checks the humans moves and completes an array with a length of 2 and returns true or false
+     * if that's false, it returns false
+     */
+   
 }
 
-function playGame_CompFirst() {
+function playGame() {
     var last = newGameData.last[human];
 
     switch (newGameData.totalMoves) {
@@ -174,19 +170,16 @@ function playGame_CompFirst() {
             break;
         case 4:
             winOrBlock(comp);
-            winOrBlock(human);
             placeMarker($(".boardCell[value=2]"), comp);
             break;
         case 6:
             winOrBlock(comp);
-            winOrBlock(human);
             if (winOrBlock(comp) === false && winOrBlock(human) === false) {
                 placeMarker($(".boardCell[value=2]"), comp);
             }
             break;
         default:
             winOrBlock(comp);
-            winOrBlock(human);
             break;
     }
 }
