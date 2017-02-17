@@ -1,7 +1,7 @@
-/* 
+/*
  * Email obfuscator script 2.1 by Tim Williams
- *  University of Arizona. Random encryption key feature by Andrew Moulden, Site Engineering Ltd. 
- *  This code is freeware provided these four comment lines remain intact. 
+ *  University of Arizona. Random encryption key feature by Andrew Moulden, Site Engineering Ltd.
+ *  This code is freeware provided these four comment lines remain intact.
  *  A wizard to generate this code is at http://www.jottings.com/obfuscator/
  */
 $(function emailObscurer() {
@@ -30,12 +30,9 @@ var humanWon = false;
 var newGameData;
 var gameData = {
     board: ['a', 'b', 'c', 'A', 'B', 'C', 'd', 'D'], // row, columns, diagonals
-    X: {},   
+    X: {},
     O: {},
     last: {},
-    centerId: [5],
-    cornerIds: [1, 3, 7, 9],
-    edgeIds: [2, 4, 6, 8],
     totalMoves: 0
 };
 
@@ -64,8 +61,8 @@ function setupBoard() {
 function  updateGameData(cell, marker) {
     var cellValue = $(cell).attr('value');
     newGameData.last[marker] = +cellValue;
-    
-    $(newGameData.board).each(function (index, element) {                                 
+
+    $(newGameData.board).each(function (index, element) {
         if ($(cell).hasClass(element)) {
             if (newGameData[marker][element]) {
                 if (newGameData[marker][element].indexOf(cellValue) === -1) {
@@ -127,7 +124,8 @@ $("#reset").click(function () {
             .removeClass("Omarker");
     setupBoard();
     isHumanTurn = false;
-    var newGameData = $.extend({}, gameData, true);
+    var newGameData = {};
+    newGameData = $.extend({}, gameData, true);
     return newGameData;
 });
 
@@ -137,19 +135,40 @@ $("#start").click(function () {
 
 // game logic
 function winOrBlock() {
-    /* 
-     * need to try to make this a single function that will work for both winning and blocking
-     * first check to see if comp can win
-     * if comp can't win, then check to see if human can win
-     * if human can't win, make a default move
-     */
+    var legitMove = false;
+    var target = "";
+    debugger;
+    function pickCell(player) {
+        for (var key of Object.keys(newGameData[player])) {
+            var k = newGameData[player][key];
+            if (k.length === 2) {
+                var x = k.reduce(function (a, b) {
+                    return Number(a) + Number(b);
+                });
+                var y = 15 - x;
+                target = '.boardCell[value=' + y + ']';
+                if ($(target).html() === "") {
+                    legitMove = true;
+                    return;
+                } else {
+                    legitMove =  false;
+                }
+            }
+        }
+    }
+     pickCell(comp);
+     
+    if (legitMove === true) {
+        placeMarker(target, comp);
+    } else {
+        pickCell(human);
+        if (legitMove === true) {
+            placeMarker(target,comp);
+        } else {
+            return;
+        }
+    }
     
-    /*
-     * the actual function checks the comp's moves and completes an array with a length of 2 and returns true or false
-     * if that returns false, it checks the humans moves and completes an array with a length of 2 and returns true or false
-     * if that's false, it returns false
-     */
-   
 }
 
 function playGame() {
@@ -169,17 +188,15 @@ function playGame() {
             }
             break;
         case 4:
-            winOrBlock(comp);
+            winOrBlock();
             placeMarker($(".boardCell[value=2]"), comp);
             break;
         case 6:
-            winOrBlock(comp);
-            if (winOrBlock(comp) === false && winOrBlock(human) === false) {
-                placeMarker($(".boardCell[value=2]"), comp);
-            }
+            winOrBlock();
+            placeMarker($(".boardCell[value=2]"), comp);
             break;
         default:
-            winOrBlock(comp);
+            winOrBlock();
             break;
     }
 }
