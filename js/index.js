@@ -27,13 +27,15 @@ var human = "O";
 var comp = "X";
 var gameOver = false;
 var humanWon = false;
-var newGameData;
-var gameData = {
-    board: ['a', 'b', 'c', 'A', 'B', 'C', 'd', 'D'], // row, columns, diagonals
-    X: {},
-    O: {},
-    last: {},
-    totalMoves: 0
+var newGameData = {};
+
+function gameData() {
+    this.board  = ['a', 'b', 'c', 'A', 'B', 'C', 'd', 'D'];    // rows, columns, diagonals
+    this.moves  = {};
+    this.X = {};
+    this.O = {};
+    this.last  = {};
+    this.totalMoves =  0;
 };
 
 //basic game functions
@@ -54,7 +56,7 @@ function setupBoard() {
         $(this).attr("value", (boardLayouts[chooseBoard][row][index % 3]));
     });
     newGameData = {};
-    newGameData = $.extend({}, gameData, true);
+    newGameData = new gameData();
     return $(".gameArea"), newGameData;
 }
 
@@ -125,7 +127,7 @@ $("#reset").click(function () {
     setupBoard();
     isHumanTurn = false;
     var newGameData = {};
-    newGameData = $.extend({}, gameData, true);
+    newGameData = new gameData();
     return newGameData;
 });
 
@@ -188,7 +190,7 @@ function playGame() {
             }
             break;
         case 4:
-            winOrBlock();
+            winOrBlock() ;
             placeMarker($(".boardCell[value=2]"), comp);
             break;
         case 6:
@@ -200,7 +202,6 @@ function playGame() {
             break;
     }
 }
-
 
 $(document).ready(function () {
     setupBoard();
