@@ -22,21 +22,20 @@ $(function emailObscurer() {
 });
 
 // default game state: computer goes first, uses X
-var isHumanTurn = false;
+var isHumanTurn = true;
 var human = "O";
 var comp = "X";
 var gameOver = false;
 var humanWon = false;
-var newGameData = {};
 
 function gameData() {
-    this.board  = ['a', 'b', 'c', 'A', 'B', 'C', 'd', 'D'];    // rows, columns, diagonals
-    this.moves  = {};
+    this.board = ['a', 'b', 'c', 'A', 'B', 'C', 'd', 'D'];    // rows, columns, diagonals
+    this.moves = {};
     this.X = {};
     this.O = {};
-    this.last  = {};
-    this.totalMoves =  0;
-};
+    this.last = {};
+    this.totalMoves = 0;
+}
 
 //basic game functions
 function setupBoard() {
@@ -55,7 +54,6 @@ function setupBoard() {
         var row = $(this).parent().attr("id");
         $(this).attr("value", (boardLayouts[chooseBoard][row][index % 3]));
     });
-    newGameData = {};
     newGameData = new gameData();
     return $(".gameArea"), newGameData;
 }
@@ -63,7 +61,6 @@ function setupBoard() {
 function  updateGameData(cell, marker) {
     var cellValue = $(cell).attr('value');
     newGameData.last[marker] = +cellValue;
-
     $(newGameData.board).each(function (index, element) {
         if ($(cell).hasClass(element)) {
             if (newGameData[marker][element]) {
@@ -76,7 +73,7 @@ function  updateGameData(cell, marker) {
         }
     });
     newGameData.totalMoves = Number(newGameData.totalMoves) + 1;
-};
+}
 
 function placeMarker(cell, marker) {
     if ($(cell).html() !== "") {
@@ -101,6 +98,10 @@ function placeMarker(cell, marker) {
     }
 }
 
+/*
+ * code for an optional feature for player to choose X or O.
+ * requires HTML for selector buttons to be uncommented
+ 
 $(".selectXorO").click(function () {
     if ($(this).val() === "X") {
         human = "X";
@@ -111,11 +112,16 @@ $(".selectXorO").click(function () {
     }
 });
 
-$(".fillCell").click(function () {          //this is just for testing; it shouldn't be in the final version
-    if (isHumanTurn === false) {
-        placeMarker(this, comp);
-    } else {
+*/
+
+$(".fillCell").click(function () {          // make this the code for the human to place her marker in the final version. 
+    if (newGameData.totalMoves >= 9) {
+        alert("Game Over. Click Reset to play again.");
+    } else if (isHumanTurn === true) {
         placeMarker(this, human);
+    } else {
+        placeMarker(this, comp);
+//        playGame();
     }
 });
 
@@ -125,21 +131,20 @@ $("#reset").click(function () {
             .removeClass("Xmarker")
             .removeClass("Omarker");
     setupBoard();
-    isHumanTurn = false;
-    var newGameData = {};
+    isHumanTurn = true;
     newGameData = new gameData();
     return newGameData;
 });
 
 $("#start").click(function () {
-    playGame(comp);
+    playGame();
 });
 
 // game logic
 function winOrBlock() {
-    var legitMove = false;
+    legitMove = false;
     var target = "";
-    debugger;
+
     function pickCell(player) {
         for (var key of Object.keys(newGameData[player])) {
             var k = newGameData[player][key];
@@ -153,24 +158,24 @@ function winOrBlock() {
                     legitMove = true;
                     return;
                 } else {
-                    legitMove =  false;
+                    legitMove = false;
                 }
             }
         }
     }
-     pickCell(comp);
-     
+    pickCell(comp);
+
     if (legitMove === true) {
         placeMarker(target, comp);
     } else {
         pickCell(human);
         if (legitMove === true) {
-            placeMarker(target,comp);
+            placeMarker(target, comp);
         } else {
-            return;
+            return legitMove = false;
         }
     }
-    
+
 }
 
 function playGame() {
@@ -179,6 +184,13 @@ function playGame() {
     switch (newGameData.totalMoves) {
         case 0:
             placeMarker($(".boardCell[value=8]"), comp);
+            break;
+        case 1:
+            if (last === 5) {
+                placeMarker($(".boardCell[value=8]"), comp);
+            } else {
+                placeMarker($(".boardCell[value=5]"), comp);
+            }
             break;
         case 2:
             if (last === 5) {
@@ -189,19 +201,45 @@ function playGame() {
                 placeMarker($(".boardCell[value=4]"), comp);
             }
             break;
+        case 3:
         case 4:
-            winOrBlock() ;
-            placeMarker($(".boardCell[value=2]"), comp);
-            break;
+        case 5:
         case 6:
-            winOrBlock();
-            placeMarker($(".boardCell[value=2]"), comp);
-            break;
         default:
             winOrBlock();
+            if (legitMove === false) {
+                placeMarker($(".boardCell[value=2]"), comp);
+            }
             break;
     }
 }
+
+/* routine for person going first
+    human chooses edge
+            computer chooses center
+            human chooses edge that sums to 15
+                computer chooses a corner
+	If your opponent puts the second O on the opposite edge, making a row or column that reads O-X-O, 
+            put your second X in a corner. Then, if your opponent puts the third O in the edge that is adjacent to your X, 
+            making a line that reads O-X-O, put your third X in the empty square to block their row of two O's. From here, 
+            you can always win with your fourth X
+				computer blocks
+			
+    human chooses center
+            computer chooses corner
+            human chooses corner
+                computer chooses corner or blocks
+                game is a draw
+            human chooses edge
+                computer blocks
+                game is a draw
+
+    /* human chooses corner
+            computer chooses center
+            human chooses corner
+            computer chooses edge or blocks
+            game is a draw
+*/
 
 $(document).ready(function () {
     setupBoard();
