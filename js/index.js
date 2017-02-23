@@ -120,8 +120,8 @@ $(".fillCell").click(function () {          // make this the code for the human 
     } else if (isHumanTurn === true) {
         placeMarker(this, human);
     } else {
-        placeMarker(this, comp);
-//        playGame();
+//     placeMarker(this, comp);
+        playGame();
     }
 });
 
